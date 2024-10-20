@@ -12,7 +12,7 @@ import LoadingView from '@/components/LoadingView';
 import TabBarLabel from '@/components/TabBarLabel';
 import { useAuthContext } from '@/contexts/AuthContext';
 import ProjectsList from '@/screens/ProjectsScreen/ProjectsList';
-import useProjectsStore from '@/stores/useProjectsStore';
+import useProjectsStore from '@/store/projectsStore';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -27,7 +27,7 @@ const Projects = () => {
     useShallow((state) => ({
       projects: state.projects,
       fetchProjects: state.fetchProjects,
-    }))
+    })),
   );
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -43,10 +43,10 @@ const Projects = () => {
     };
 
     getProjectsRequest();
-  }, []);
+  }, [fetchProjects]);
 
   const [authProjectsData, noAuthProjectsData] = partition(projects, (item) =>
-    sessions.map((item) => item.projectId).includes(item.id)
+    sessions.map((item) => item.projectId).includes(item.id),
   );
 
   if (isLoading) {
@@ -93,7 +93,16 @@ const Projects = () => {
   );
 
   return (
-    <Tab.Navigator initialLayout={{ width }}>
+    <Tab.Navigator
+      initialLayout={{ width }}
+      screenOptions={{
+        tabBarContentContainerStyle: {
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        },
+      }}
+    >
       <Tab.Screen
         name="my"
         options={{
